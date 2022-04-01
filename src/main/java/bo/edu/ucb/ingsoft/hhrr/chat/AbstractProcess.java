@@ -1,10 +1,12 @@
 package bo.edu.ucb.ingsoft.hhrr.chat;
 
-import bo.edu.ucb.ingsoft.hhrr.chat.widgets.Widget;
+import bo.edu.ucb.ingsoft.hhrr.chat.widgets.AbstractWidget;
+import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.Map;
 
-public abstract class Process {
+public abstract class AbstractProcess {
     // Nombre del proceso, ej: Menu Principal
     private String name;
     // Proceso por defecto cuando se inicio o existe un error
@@ -20,22 +22,26 @@ public abstract class Process {
     // Se lo puede obtener con System.getCurretnMillis()/1000
     private long startDate;
 
+    // Un mapa para almacenar los datos del usuario durante el proceso del chat.
     private Map<String, Object> userData;
 
     // Posibles valores: STARTED, FINISH, ERROR, AWAITING_USER_RESPONSE
     private String status;
 
-    // Método que se invoca al iniciar el proceso
-    public abstract Widget onInit();
+    // Este metodo decide que hacer con el usuario en cada tipo de proceso.
+    public abstract void handle(Update update, TelegramLongPollingBot bot);
+
+//    // Método que se invoca al iniciar el proceso
+//    public abstract AbstractWidget onInit();
 
     // A que proceso se debe ir en caso de error.
-    public abstract Process onError();
+    public abstract AbstractProcess onError();
 
     // A que proceso se debe ir en caso de terminar satisfactoriamente.
-    public abstract Process onSuccess();
+    public abstract AbstractProcess onSuccess();
 
-    // En caso de que el proce de timeout
-    public abstract Process onTimeout();
+    // En caso de que el proceso de timeout con cual continuo
+    public abstract AbstractProcess onTimeout();
 
     public String getName() {
         return name;
@@ -92,4 +98,5 @@ public abstract class Process {
     public void setStatus(String status) {
         this.status = status;
     }
+
 }
