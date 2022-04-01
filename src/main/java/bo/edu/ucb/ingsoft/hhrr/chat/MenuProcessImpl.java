@@ -4,6 +4,7 @@ import bo.edu.ucb.ingsoft.hhrr.chat.widgets.AbstractWidget;
 import bo.edu.ucb.ingsoft.hhrr.chat.widgets.MenuWidgetImpl;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.ArrayList;
@@ -30,26 +31,52 @@ public class MenuProcessImpl extends AbstractProcess {
 
 
     @Override
-    public void handle(Update update, TelegramLongPollingBot bot) {
-
+    public AbstractProcess handle(Update update, TelegramLongPollingBot bot) {
+        AbstractProcess result = this; // sigo en el mismo proceso.
         Long chatId = update.getMessage().getChatId();
 
+        if (this.getStatus().equals("STARTED")) {
+
+            showMainMenu(bot, chatId);
+        }
+
+        if (this.getStatus().equals("AWAITING_USER_RESPONSE")) {
+            // Estamos esperando por un numero 1 o 2
+            Message message = update.getMessage();
+            if ( message.hasText() ) {
+                // Intentamos transformar en número
+                String text = message.getText(); // El texto contiene asdasdas
+                try {
+                    int opcion = Integer.parseInt(text);
+                    switch (opcion){
+                        case 1 : result = new QueryPastRequestsProcessImpl();
+                        break;
+                        case 2 : result = new RequestsPermissionProcessImpl();
+                        break;
+                        default: showMainMenu(bot, chatId);
+                    }
+                } catch (NumberFormatException ex) {
+                    showMainMenu(bot, chatId);
+                }
+                // continuar con el proceso seleccionado
+            } else { // Si me enviaron algo diferente de un texto.
+                showMainMenu(bot, chatId);
+            }
+        }
+        return result;
+    }
+
+    private void showMainMenu(TelegramLongPollingBot bot, Long chatId) {
         StringBuffer sb = new StringBuffer();
         sb.append("MENU PRINCIPAL - BOT RRHH\r\n");
         sb.append("1. Consultar permisos solicitados\r\n");
         sb.append("2. Solicitar vacación\r\n");
         sb.append("Elija una opción:\r\n");
-
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.setChatId(chatId.toString());
-        sendMessage.setText(sb.toString());
-        try {
-            bot.execute(sendMessage);
-        } catch (Exception ex) {
-            // relanzamos la excepción
-            throw new RuntimeException(ex);
-        }
+        sendStringBuffer(bot, chatId, sb);
+        this.setStatus("AWAITING_USER_RESPONSE");
     }
+
+
 
     @Override
     public AbstractProcess onError() {

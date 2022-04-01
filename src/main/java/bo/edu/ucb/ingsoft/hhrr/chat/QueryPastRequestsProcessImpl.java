@@ -1,8 +1,10 @@
 package bo.edu.ucb.ingsoft.hhrr.chat;
 
-import bo.edu.ucb.ingsoft.hhrr.chat.widgets.AbstractWidget;
+import bo.edu.ucb.ingsoft.hhrr.bl.PermissionBl;
+import bo.edu.ucb.ingsoft.hhrr.dto.PermissionDto;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import java.util.List;
 
 public class QueryPastRequestsProcessImpl extends AbstractProcess {
 
@@ -22,8 +24,18 @@ public class QueryPastRequestsProcessImpl extends AbstractProcess {
 //    }
 
     @Override
-    public void handle(Update update, TelegramLongPollingBot bot) {
-
+    public AbstractProcess handle(Update update, TelegramLongPollingBot bot) {
+        Long chatId = update.getMessage().getChatId();
+        PermissionBl permissionBl = new PermissionBl();
+        List<PermissionDto> permissionList = permissionBl.findLast10PermissionsByChatId(chatId);
+        StringBuffer sb = new StringBuffer();
+        sb.append("Este año has solicitado " ).append(permissionList.size());
+        sb.append(" permisos. Bajo el siguiente detalle\r\n");
+        for(PermissionDto permission: permissionList) {
+            sb.append(permission.toString()).append("\n\r");
+        }
+        sendStringBuffer(bot, chatId, sb);
+        return new MenuProcessImpl();
     }
 
     @Override

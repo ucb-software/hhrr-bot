@@ -2,6 +2,7 @@ package bo.edu.ucb.ingsoft.hhrr.chat;
 
 import bo.edu.ucb.ingsoft.hhrr.chat.widgets.AbstractWidget;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 public class RequestsPermissionProcessImpl extends AbstractProcess {
@@ -23,8 +24,21 @@ public class RequestsPermissionProcessImpl extends AbstractProcess {
 //    }
 
     @Override
-    public void handle(Update update, TelegramLongPollingBot bot) {
+    public AbstractProcess handle(Update update, TelegramLongPollingBot bot) {
+        Long chatId = update.getMessage().getChatId();
+        StringBuffer sb = new StringBuffer();
+        sb.append("Solicitar permiso \r\n");
 
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(chatId.toString());
+        sendMessage.setText(sb.toString());
+        try {
+            bot.execute(sendMessage);
+        } catch (Exception ex) {
+            // relanzamos la excepción
+            throw new RuntimeException(ex);
+        }
+        return this;
     }
 
     @Override

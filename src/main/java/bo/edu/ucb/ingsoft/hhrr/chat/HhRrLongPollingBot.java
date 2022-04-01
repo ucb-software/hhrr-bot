@@ -38,11 +38,20 @@ public class HhRrLongPollingBot extends TelegramLongPollingBot {
             // Debo crear el proceso por defecto
             currentProcess = new MenuProcessImpl();
             usersSession.put(chatId, currentProcess);
-            currentProcess.handle(update, this);
+            AbstractProcess nextProcess = currentProcess.handle(update, this);
+            if (!nextProcess.equals(currentProcess)) { // Si el siguiente proceso es diferente
+                nextProcess.handle(update, this);
+            }//
+            usersSession.put(chatId, nextProcess);
+
         } else { // Ya existe un proceso
             System.out.println("Recuperar el proceso para el  chatId: " + chatId);
             currentProcess = usersSession.get(chatId);
-            currentProcess.handle(update, this);
+            AbstractProcess nextProcess = currentProcess.handle(update, this);
+            if (!nextProcess.equals(currentProcess)) { // Si el siguiente proceso es diferente
+                nextProcess.handle(update, this);
+            }//
+            usersSession.put(chatId, nextProcess);
         }
 
     }

@@ -2,6 +2,7 @@ package bo.edu.ucb.ingsoft.hhrr.chat;
 
 import bo.edu.ucb.ingsoft.hhrr.chat.widgets.AbstractWidget;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.Map;
@@ -29,7 +30,7 @@ public abstract class AbstractProcess {
     private String status;
 
     // Este metodo decide que hacer con el usuario en cada tipo de proceso.
-    public abstract void handle(Update update, TelegramLongPollingBot bot);
+    public abstract AbstractProcess handle(Update update, TelegramLongPollingBot bot);
 
 //    // Método que se invoca al iniciar el proceso
 //    public abstract AbstractWidget onInit();
@@ -42,6 +43,18 @@ public abstract class AbstractProcess {
 
     // En caso de que el proceso de timeout con cual continuo
     public abstract AbstractProcess onTimeout();
+
+    protected void sendStringBuffer(TelegramLongPollingBot bot, Long chatId, StringBuffer sb) {
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(chatId.toString());
+        sendMessage.setText(sb.toString());
+        try {
+            bot.execute(sendMessage);
+        } catch (Exception ex) {
+            // relanzamos la excepción
+            throw new RuntimeException(ex);
+        }
+    }
 
     public String getName() {
         return name;
