@@ -31,16 +31,14 @@ public class MenuProcessImpl extends AbstractProcess {
 
 
     @Override
-    public AbstractProcess handle(Update update, TelegramLongPollingBot bot) {
+    public AbstractProcess handle(Update update, HhRrLongPollingBot bot) {
         AbstractProcess result = this; // sigo en el mismo proceso.
         Long chatId = update.getMessage().getChatId();
 
         if (this.getStatus().equals("STARTED")) {
 
             showMainMenu(bot, chatId);
-        }
-
-        if (this.getStatus().equals("AWAITING_USER_RESPONSE")) {
+        } else if (this.getStatus().equals("AWAITING_USER_RESPONSE")) {
             // Estamos esperando por un numero 1 o 2
             Message message = update.getMessage();
             if ( message.hasText() ) {
@@ -66,13 +64,17 @@ public class MenuProcessImpl extends AbstractProcess {
         return result;
     }
 
-    private void showMainMenu(TelegramLongPollingBot bot, Long chatId) {
+    private void showMainMenu(HhRrLongPollingBot bot, Long chatId) {
         StringBuffer sb = new StringBuffer();
         sb.append("MENU PRINCIPAL - BOT RRHH\r\n");
         sb.append("1. Consultar permisos solicitados\r\n");
         sb.append("2. Solicitar vacación\r\n");
         sb.append("Elija una opción:\r\n");
         sendStringBuffer(bot, chatId, sb);
+
+        String nombre = "Juan";
+        String apellido = "Perez";
+        String nombreCompleto = nombre + " " + apellido;
         this.setStatus("AWAITING_USER_RESPONSE");
     }
 

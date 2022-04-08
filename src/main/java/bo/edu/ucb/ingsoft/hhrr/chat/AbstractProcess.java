@@ -30,7 +30,7 @@ public abstract class AbstractProcess {
     private String status;
 
     // Este metodo decide que hacer con el usuario en cada tipo de proceso.
-    public abstract AbstractProcess handle(Update update, TelegramLongPollingBot bot);
+    public abstract AbstractProcess handle(Update update, HhRrLongPollingBot bot);
 
 //    // Método que se invoca al iniciar el proceso
 //    public abstract AbstractWidget onInit();
@@ -44,12 +44,12 @@ public abstract class AbstractProcess {
     // En caso de que el proceso de timeout con cual continuo
     public abstract AbstractProcess onTimeout();
 
-    protected void sendStringBuffer(TelegramLongPollingBot bot, Long chatId, StringBuffer sb) {
+    protected void sendStringBuffer(HhRrLongPollingBot bot, Long chatId, StringBuffer sb) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(chatId.toString());
         sendMessage.setText(sb.toString());
         try {
-            bot.execute(sendMessage);
+            bot.sendMyMessage(sendMessage);
         } catch (Exception ex) {
             // relanzamos la excepción
             throw new RuntimeException(ex);

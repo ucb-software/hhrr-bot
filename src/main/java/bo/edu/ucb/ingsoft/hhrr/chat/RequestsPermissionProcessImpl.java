@@ -24,7 +24,7 @@ public class RequestsPermissionProcessImpl extends AbstractProcess {
 //    }
 
     @Override
-    public AbstractProcess handle(Update update, TelegramLongPollingBot bot) {
+    public AbstractProcess handle(Update update, HhRrLongPollingBot bot) {
         Long chatId = update.getMessage().getChatId();
         StringBuffer sb = new StringBuffer();
         sb.append("Solicitar permiso \r\n");

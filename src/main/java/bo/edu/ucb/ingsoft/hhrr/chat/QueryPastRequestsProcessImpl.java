@@ -24,7 +24,7 @@ public class QueryPastRequestsProcessImpl extends AbstractProcess {
 //    }
 
     @Override
-    public AbstractProcess handle(Update update, TelegramLongPollingBot bot) {
+    public AbstractProcess handle(Update update, HhRrLongPollingBot bot) {
         Long chatId = update.getMessage().getChatId();
         PermissionBl permissionBl = new PermissionBl();
         List<PermissionDto> permissionList = permissionBl.findLast10PermissionsByChatId(chatId);
