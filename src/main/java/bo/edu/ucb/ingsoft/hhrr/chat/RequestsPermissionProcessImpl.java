@@ -1,6 +1,7 @@
 package bo.edu.ucb.ingsoft.hhrr.chat;
 
 import bo.edu.ucb.ingsoft.hhrr.chat.widgets.AbstractWidget;
+import org.springframework.context.ApplicationContext;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -24,7 +25,7 @@ public class RequestsPermissionProcessImpl extends AbstractProcess {
 //    }
 
     @Override
-    public AbstractProcess handle(Update update, HhRrLongPollingBot bot) {
+    public AbstractProcess handle(ApplicationContext context, Update update, HhRrLongPollingBot bot) {
         Long chatId = update.getMessage().getChatId();
         StringBuffer sb = new StringBuffer();
         sb.append("Solicitar permiso \r\n");
